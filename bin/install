@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+source .env
+./bin/_composer require n98/magerun
+./bin/_download 1.9.3.8
+./bin/magerun install \
+  --noDownload \
+  --forceUseDb \
+  --installationFolder=. \
+  --dbHost=db \
+  --dbUser=magento \
+  --dbPass=magento \
+  --dbName=magento \
+  --installSampleData=yes \
+  --useDefaultConfigParams=yes \
+  --baseUrl=http://magento.test/ \
+  --developer-mode
+./bin/fixperms
+./bin/_recreate_db
+./bin/_sampledata
+./bin/magerun dev:log --on --global
+./bin/magerun index:reindex:all
+./bin/magerun config:set web/secure/base_url $MAGENTO1_DOMAIN_URL
+./bin/magerun config:set web/unsecure/base_url $MAGENTO1_DOMAIN_URL
+./bin/magerun config:set currency/options/base BRL
+./bin/magerun config:set currency/options/default BRL
+./bin/magerun config:set currency/options/allow USD,EUR,BRL
+./bin/magerun admin:user:create admin admin@example.com password admin doe
+./bin/magerun customer:create -n customer@example.com password customer doe
+./bin/magerun cache:disable

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./bin/magerun dev:symlinks --off --global -n
+
+./bin/cli /bin/sh -c 'for file in $(find . -type l -not -path "./vendor/*"); do rm ${file}; done'

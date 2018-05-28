@@ -1,0 +1,3 @@
+#!/bin/bash
+docker-compose exec db mysql -h db -u magento -pmagento -e 'drop database magento'
+docker-compose exec db mysql -h db -u magento -pmagento -e 'create database magento'

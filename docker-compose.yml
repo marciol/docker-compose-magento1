@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  mg-static:
+    build: images/nginx
+    container_name: ${PROJECT_NAME}-static
+    restart: always
+    ports:
+      - "${LOCALHOST_HTTP_PORT:-80}:8000"
+      - "${LOCALHOST_HTTPS_PORT:-443}:443"
+    links:
+      - db
+      - phpfpm
+    networks:
+      default:
+        aliases:
+          - magento.test
+    env_file: ./.env
+    volumes: &appvolumes
+      - ./src:/var/www/html:delegated
+      - ../:/var/www/plugins:delegated
+      - ~/.composer:/var/www/.composer:delegated
+      - sockdata:/sock
+
+  phpfpm:
+    image: markoshust/magento-php:5.6-fpm
+    links:
+      - db
+    restart: always
+    volumes: *appvolumes
+    networks:
+      - default
+
+  db:
+    container_name: magento-db
+    image: percona:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    env_file:
+      - env/db.env
+      - ./.env
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - default
+
+volumes:
+  dbdata:
+  sockdata:

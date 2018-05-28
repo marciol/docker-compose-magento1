@@ -1,0 +1,13 @@
+#!/bin/bash
+
+./bin/magerun dev:symlinks --on --global -n
+
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/app/etc/modules/* /var/www/html/app/etc/modules/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/app/code/community/* /var/www/html/app/code/community/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/app/design/adminhtml/default/default/layout/* /var/www/html/app/design/adminhtml/default/default/layout/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/app/design/adminhtml/default/default/template/* /var/www/html/app/design/adminhtml/default/default/template/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/app/design/frontend/base/default/layout/* /var/www/html/app/design/frontend/base/default/layout/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/app/design/frontend/base/default/template/* /var/www/html/app/design/frontend/base/default/template/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/skin/adminhtml/default/default/* /var/www/html/skin/adminhtml/default/default/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/skin/frontend/base/default/* /var/www/html/skin/frontend/base/default/"
+./bin/cli /bin/sh -c "ln -sf /var/www/plugins/lib/* /var/www/html/lib/"

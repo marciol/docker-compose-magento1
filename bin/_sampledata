@@ -1,0 +1,8 @@
+#!/bin/bash
+
+curl https://raw.githubusercontent.com/bluec/compressed-magento-sample-data/1.9.2.4/compressed-magento-sample-data-1.9.2.4.tgz -o /tmp/compressed-magento-sample-data-1.9.2.4.tgz
+tar -xf /tmp/compressed-magento-sample-data-1.9.2.4.tgz -C /tmp/
+mkdir -p ./src/media/catalog
+cp -vnpr /tmp/magento-sample-data-1.9.2.4/media/* ./src/media/
+cp -vnpr /tmp/magento-sample-data-1.9.2.4/skin/* ./src/skin/
+docker-compose exec -T phpfpm mysql -h db -u magento -pmagento magento < /tmp/magento-sample-data-1.9.2.4/magento_sample_data_for_1.9.2.4.sql
