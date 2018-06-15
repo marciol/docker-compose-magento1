@@ -1,0 +1,2 @@
+#!/bin/bash
+./bin/cli bash -c "cd ../plugins/dev/Rakuten/tests/ && sleep 1 && ./vendor/bin/behat"

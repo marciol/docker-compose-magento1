@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./bin/cli bash -c "cd /var/www/plugins/dev/Rakuten/tests/ && composer update"
+./bin/cli bash -c "java -jar /var/www/plugins/dev/Rakuten/tests/vendor/se/selenium-server-standalone/bin/selenium-server-standalone.jar -role hub &> /var/www/html/output.log & java -jar /var/www/plugins/dev/Rakuten/tests/vendor/se/selenium-server-standalone/bin/selenium-server-standalone.jar -role node -hub http://172.18.0.3:4444/grid/register &> /var/www/html/node.log"

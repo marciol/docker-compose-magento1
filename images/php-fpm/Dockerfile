@@ -64,15 +64,12 @@ rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
+# Chrome and chromedriver
 RUN apt-get update && \
     apt-get install -yq wget --no-install-recommends && \
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
     apt-get update && \
     apt-get install -y chromedriver google-chrome-unstable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont libgconf-2-4 --no-install-recommends
-
-RUN mkdir /tmp/.X11-unix && \
-    chmod 1777 /tmp/.X11-unix && \
-    chown root /tmp/.X11-unix/
 
 ENTRYPOINT ["docker-php-entrypoint", "-R"]
