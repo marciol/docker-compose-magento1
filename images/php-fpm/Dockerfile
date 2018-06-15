@@ -36,9 +36,6 @@ RUN pecl channel-update pecl.php.net \
 RUN curl -sS https://getcomposer.org/installer | \
   php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN groupadd -g 1000 app \
- && useradd -g 1000 -u 1000 -d /var/www -s /bin/bash app
-
 RUN printf '* *\t* * *\tapp\t%s/usr/local/bin/php /var/www/html/cron.php\n#\n' >> /etc/crontab
 
 COPY conf/www.conf /usr/local/etc/php-fpm.d/
@@ -54,27 +51,28 @@ WORKDIR /var/www/html
 
 EXPOSE 9001
 
-USER root
-
 # Install Java.
 RUN mkdir /usr/share/man/man1/
 RUN mkdir /var/www/.cache
 
 RUN \
   apt-get update && \
-  apt-get install -y software-properties-common iceweasel xvfb wget && \
+  apt-get install -y software-properties-common xvfb wget sudo gnupg && \
   add-apt-repository ppa:openjdk-r/ppa && \
   apt-get install -y openjdk-8-jdk && \
 rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-# Geckodriver
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.16.1/geckodriver-v0.16.1-linux64.tar.gz && \
-    sh -c 'tar -x geckodriver -zf geckodriver-v0.16.1-linux64.tar.gz -O > /usr/bin/geckodriver' && \
-    chmod +x /usr/bin/geckodriver && \
-    rm geckodriver-v0.16.1-linux64.tar.gz
+RUN apt-get update && \
+    apt-get install -yq wget --no-install-recommends && \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
+    apt-get update && \
+    apt-get install -y chromedriver google-chrome-unstable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont libgconf-2-4 --no-install-recommends
 
-RUN groupadd docker && usermod -aG docker app
+RUN mkdir /tmp/.X11-unix && \
+    chmod 1777 /tmp/.X11-unix && \
+    chown root /tmp/.X11-unix/
 
 ENTRYPOINT ["docker-php-entrypoint", "-R"]
