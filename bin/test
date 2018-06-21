@@ -1,2 +1,7 @@
 #!/bin/bash
+
+./bin/cli mv /var/www/html/app/etc/local.xml /tmp/local.xml
+./bin/cli cp /var/www/plugins/dev/Rakuten/tests/etc/local.xml /var/www/html/app/etc/local.xml
 ./bin/cli bash -c "cd ../plugins/dev/Rakuten/tests/ && sleep 1 && ./vendor/bin/behat"
+./bin/cli rm /var/www/html/app/etc/local.xml
+./bin/cli mv /tmp/local.xml /var/www/html/app/etc/local.xml

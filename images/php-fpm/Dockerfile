@@ -72,4 +72,6 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y chromedriver google-chrome-unstable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont libgconf-2-4 --no-install-recommends
 
+RUN apt-get install ifconfig
+
 ENTRYPOINT ["docker-php-entrypoint", "-R"]
