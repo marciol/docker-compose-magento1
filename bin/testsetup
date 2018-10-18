@@ -1,0 +1,38 @@
+#!/bin/bash
+
+docker-compose exec db mysql -h db -u magento -pmagento -e 'drop database magento_test'
+docker-compose exec db mysql -h db -u magento -pmagento -e 'create database magento_test'
+
+# Download magento sample database
+curl https://raw.githubusercontent.com/bluec/compressed-magento-sample-data/1.9.2.4/compressed-magento-sample-data-1.9.2.4.tgz -o /tmp/compressed-magento-sample-data-1.9.2.4.tgz
+tar -xf /tmp/compressed-magento-sample-data-1.9.2.4.tgz -C /tmp/
+mkdir -p ./src/media/catalog
+cp -vnpr /tmp/magento-sample-data-1.9.2.4/media/* ./src/media/
+cp -vnpr /tmp/magento-sample-data-1.9.2.4/skin/* ./src/skin/
+docker-compose exec -T phpfpm mysql -h db -u magento -pmagento magento_test < /tmp/magento-sample-data-1.9.2.4/magento_sample_data_for_1.9.2.4.sql
+
+# Use test environment local.xml
+./bin/cli mv /var/www/html/app/etc/local.xml /tmp/local.xml
+./bin/cli cp /var/www/plugins/dev/Rakuten/tests/etc/local.xml /var/www/html/app/etc/local.xml
+
+# Setup magento
+./bin/magerun index:reindex:all
+./bin/magerun config:set web/secure/base_url $MAGENTO1_DOMAIN_URL
+./bin/magerun config:set web/unsecure/base_url $MAGENTO1_DOMAIN_URL
+./bin/magerun config:set currency/options/base BRL
+./bin/magerun config:set currency/options/default BRL
+./bin/magerun config:set currency/options/allow USD,EUR,BRL
+./bin/magerun admin:user:create admin admin@example.com password admin doe
+./bin/magerun customer:create -n customer@example.com password customer doe
+./bin/magerun cache:disable
+
+# Create default admin and customer users
+./bin/magerun admin:user:create admin admin@example.com password admin doe
+./bin/magerun customer:create -n customer@example.com password customer doe
+
+# Rollback to normal local.xml
+./bin/cli rm /var/www/html/app/etc/local.xml
+./bin/cli mv /tmp/local.xml /var/www/html/app/etc/local.xml
+
+# Update composer for tests, ensuring dependencies are installed
+./bin/cli bash -c "cd /var/www/plugins/dev/Rakuten/tests/ && composer update"

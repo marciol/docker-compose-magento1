@@ -6,7 +6,7 @@ services:
     container_name: ${PROJECT_NAME}-static
     restart: always
     ports:
-      - "${LOCALHOST_HTTP_PORT:-80}:8000"
+      - "${LOCALHOST_HTTP_PORT:-80}:80"
       - "${LOCALHOST_HTTPS_PORT:-443}:443"
     links:
       - db
@@ -23,7 +23,7 @@ services:
       - sockdata:/sock
 
   phpfpm:
-    image: markoshust/magento-php:5.6-fpm
+    build: images/php-fpm
     links:
       - db
     restart: always
